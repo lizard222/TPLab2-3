@@ -1,0 +1,62 @@
+{% extends 'store/base.html' %}
+
+{% block content %}
+<div class="faction-header">
+    {% if selected_faction.logo %}
+    <img src="{{ selected_faction.logo.url }}" alt="{{ selected_faction.name }}" class="faction-header-logo">
+    {% endif %}
+    <div class="faction-header-info">
+        <h2>Армия {{ selected_faction.name }}</h2>
+        <p class="faction-description">{{ selected_faction.description }}</p>
+        <a href="{% url 'product_list' %}" class="btn-return">← Все фракции</a>
+    </div>
+</div>
+
+<div class="filters">
+    <h3>Типы товаров:</h3>
+    <a href="?faction={{ selected_faction.id }}" class="btn">Все товары</a>
+    <a href="?faction={{ selected_faction.id }}&type=MINIATURE" class="btn">Миниатюры</a>
+    <a href="?faction={{ selected_faction.id }}&type=STARTER_SET" class="btn">Стартовые наборы</a>
+    <a href="?faction={{ selected_faction.id }}&type=PAINT" class="btn">Краски</a>
+    <a href="?faction={{ selected_faction.id }}&type=ACCESSORY" class="btn">Аксессуары</a>
+</div>
+
+<div class="products">
+    {% for product in products %}
+    <div class="product-card">
+        {% if product.image %}
+        <img src="{{ product.image.url }}" alt="{{ product.name }}" class="product-image">
+        {% else %}
+        <div class="product-image-placeholder">
+            🛡️
+        </div>
+        {% endif %}
+        
+        <div class="product-info">
+            <h3>{{ product.name }}</h3>
+            <p class="type">{{ product.get_product_type_display }}</p>
+            
+            {% if product.get_discounted_price != product.price %}
+            <p class="price">
+                <span class="old-price">{{ product.price }} руб.</span>
+                <span class="new-price">{{ product.get_discounted_price|floatformat:2 }} руб.</span>
+            </p>
+            {% else %}
+            <p class="price">{{ product.price }} руб.</p>
+            {% endif %}
+            
+            {% if product.is_preorder %}
+            <span class="preorder">Предзаказ</span>
+            {% endif %}
+            
+            <form method="post" action="{% url 'add_to_cart' product.id %}">
+                {% csrf_token %}
+                <button type="submit">В корзину</button>
+            </form>
+        </div>
+    </div>
+    {% empty %}
+    <p>Для этой фракции пока нет товаров.</p>
+    {% endfor %}
+</div>
+{% endblock %}

@@ -1,0 +1,27 @@
+{% extends 'store/base.html' %}
+
+{% block content %}
+<h1>Корзина</h1>
+
+<div class="cart-summary">
+    <p>Общее количество миниатюр: {{ total_quantity }}</p>
+    <p>Общая стоимость: {{ total_price }} руб.</p>
+</div>
+
+{% for item in cart_items %}
+<div class="cart-item">
+    <h3>{{ item.product.name }}</h3>
+    <p>Фракция: {{ item.product.faction.name }}</p>
+    <p>Количество: {{ item.quantity }}</p>
+    <p>Стоимость: {{ item.total_price }} руб.</p>
+</div>
+{% endfor %}
+
+<div style="margin-top: 20px; display: flex; gap: 10px;">
+    <a href="{% url 'product_list' %}" class="btn">Вернуться к товарам</a>
+    
+    {% if cart_items %}
+    <button style="background: #27ae60;" class="btn">Оформить заказ</button>
+    {% endif %}
+</div>
+{% endblock %}

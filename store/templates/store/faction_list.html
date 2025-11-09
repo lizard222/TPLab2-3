@@ -1,0 +1,28 @@
+{% extends 'store/base.html' %}
+
+{% block content %}
+<h2>Армии Warhammer</h2>
+<p class="intro">Выберите фракцию для просмотра товаров</p>
+
+<div class="factions-grid">
+    {% for faction in factions %}
+    <div class="faction-card">
+        {% if faction.logo %}
+        <img src="{{ faction.logo.url }}" alt="{{ faction.name }}" class="faction-logo">
+        {% else %}
+        <div class="faction-logo-placeholder">
+            ⚔️
+        </div>
+        {% endif %}
+        
+        <div class="faction-info">
+            <h3>{{ faction.name }}</h3>
+            <p class="faction-description">{{ faction.description }}</p>
+            <a href="?faction={{ faction.id }}" class="btn btn-faction">Смотреть товары</a>
+        </div>
+    </div>
+    {% empty %}
+    <p>Фракции пока не добавлены.</p>
+    {% endfor %}
+</div>
+{% endblock %}

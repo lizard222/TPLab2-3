@@ -1,0 +1,53 @@
+{% extends 'store/base.html' %}
+
+{% block content %}
+<h2>Каталог товаров Warhammer</h2>
+
+<div class="filters">
+    <h3>Фракции:</h3>
+    <a href="?" class="btn">Все товары</a>
+    {% for faction in factions %}
+    <a href="?faction={{ faction.id }}" class="btn">{{ faction.name }}</a>
+    {% endfor %}
+</div>
+
+<div class="products">
+    {% for product in products %}
+    <div class="product-card">
+        {% if product.image %}
+        <img src="{{ product.image.url }}" alt="{{ product.name }}" class="product-image">
+        {% else %}
+        <div class="product-image-placeholder">
+            🛡️
+        </div>
+        {% endif %}
+        
+        <div class="product-info">
+            <h3>{{ product.name }}</h3>
+            <p class="faction">{{ product.faction.name }}</p>
+            <p class="type">{{ product.get_product_type_display }}</p>
+            
+            {% if product.get_discounted_price != product.price %}
+            <p class="price">
+                <span class="old-price">{{ product.price }} руб.</span>
+                <span class="new-price">{{ product.get_discounted_price|floatformat:2 }} руб.</span>
+            </p>
+            {% else %}
+            <p class="price">{{ product.price }} руб.</p>
+            {% endif %}
+            
+            {% if product.is_preorder %}
+            <span class="preorder">Предзаказ</span>
+            {% endif %}
+            
+            <form method="post" action="{% url 'add_to_cart' product.id %}">
+                {% csrf_token %}
+                <button type="submit">В корзину</button>
+            </form>
+        </div>
+    </div>
+    {% empty %}
+    <p>Товаров пока нет.</p>
+    {% endfor %}
+</div>
+{% endblock %}
