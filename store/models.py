@@ -7,6 +7,9 @@ class Faction(models.Model):
     description = models.TextField()
     logo = models.ImageField(upload_to='factions/')
 
+    def __str__(self):
+        return self.name
+
 class Product(models.Model):
     PRODUCT_TYPES = [
         ('MINIATURE', 'Миниатюры'),
@@ -32,9 +35,15 @@ class Product(models.Model):
             return self.price * Decimal('0.9')
         return self.price
 
+    def __str__(self):
+        return self.name
+
 class Cart(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     created_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"Cart of {self.user.username}"
 
 class CartItem(models.Model):
     cart = models.ForeignKey(Cart, on_delete=models.CASCADE)
@@ -43,6 +52,9 @@ class CartItem(models.Model):
     
     def total_price(self):
         return self.product.get_discounted_price() * self.quantity
+    
+    def __str__(self):
+        return f"{self.quantity} x {self.product.name}"
 
 class Order(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
