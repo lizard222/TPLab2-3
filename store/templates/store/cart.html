@@ -1,27 +1,64 @@
 {% extends 'store/base.html' %}
 
 {% block content %}
-<h1>Корзина</h1>
+<h2>🛒 Ваша корзина</h2>
 
+{% if cart_items %}
 <div class="cart-summary">
-    <p>Общее количество миниатюр: {{ total_quantity }}</p>
-    <p>Общая стоимость: {{ total_price }} руб.</p>
+    <p><strong>Общее количество товаров:</strong> {{ total_quantity }}</p>
+    <p><strong>Общая стоимость:</strong> {{ total_price|floatformat:2 }} руб.</p>
 </div>
 
-{% for item in cart_items %}
-<div class="cart-item">
-    <h3>{{ item.product.name }}</h3>
-    <p>Фракция: {{ item.product.faction.name }}</p>
-    <p>Количество: {{ item.quantity }}</p>
-    <p>Стоимость: {{ item.total_price }} руб.</p>
+<div class="cart-items">
+    {% for item in cart_items %}
+    <div class="cart-item">
+        <div class="cart-item-image">
+            {% if item.product.image %}
+            <img src="{{ item.product.image.url }}" alt="{{ item.product.name }}" class="product-image">
+            {% else %}
+            <div class="product-image-placeholder">
+                🛡️
+            </div>
+            {% endif %}
+        </div>
+        
+        <div class="cart-item-info">
+            <h3>{{ item.product.name }}</h3>
+            <p class="faction">{{ item.product.faction.name }}</p>
+            <p class="type">{{ item.product.get_product_type_display }}</p>
+            
+            <div class="cart-item-controls">
+                <form method="post" action="{% url 'update_cart_quantity' item.id %}" class="quantity-form">
+                    {% csrf_token %}
+                    <label>Количество:</label>
+                    <input type="number" name="quantity" value="{{ item.quantity }}" min="1" max="99" class="quantity-input">
+                    <button type="submit" class="btn btn-update">Обновить</button>
+                </form>
+                
+                <form method="post" action="{% url 'remove_from_cart' item.id %}" class="remove-form">
+                    {% csrf_token %}
+                    <button type="submit" class="btn btn-remove">🗑️ Удалить</button>
+                </form>
+            </div>
+        </div>
+        
+        <div class="cart-item-price">
+            <p class="price">{{ item.total_price|floatformat:2 }} руб.</p>
+            <p class="unit-price">{{ item.product.get_discounted_price|floatformat:2 }} руб. × {{ item.quantity }}</p>
+        </div>
+    </div>
+    {% endfor %}
 </div>
-{% endfor %}
 
-<div style="margin-top: 20px; display: flex; gap: 10px;">
-    <a href="{% url 'product_list' %}" class="btn">Вернуться к товарам</a>
-    
-    {% if cart_items %}
-    <button style="background: #27ae60;" class="btn">Оформить заказ</button>
-    {% endif %}
+<div class="cart-actions">
+    <a href="{% url 'product_list' %}" class="btn btn-return">← Продолжить покупки</a>
+    <button class="btn btn-checkout">Оформить заказ</button>
 </div>
+
+{% else %}
+<div class="empty-cart">
+    <p>Ваша корзина пуста.</p>
+    <a href="{% url 'product_list' %}" class="btn">Вернуться к покупкам</a>
+</div>
+{% endif %}
 {% endblock %}

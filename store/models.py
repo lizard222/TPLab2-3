@@ -3,7 +3,7 @@ from django.contrib.auth.models import User
 from decimal import Decimal 
 
 class Faction(models.Model):
-    name = models.CharField(max_length=100)  # Space Marines, Chaos, etc.
+    name = models.CharField(max_length=100) 
     description = models.TextField()
     logo = models.ImageField(upload_to='factions/')
 

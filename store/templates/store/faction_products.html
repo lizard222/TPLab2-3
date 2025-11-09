@@ -14,11 +14,26 @@
 
 <div class="filters">
     <h3>Типы товаров:</h3>
-    <a href="?faction={{ selected_faction.id }}" class="btn">Все товары</a>
-    <a href="?faction={{ selected_faction.id }}&type=MINIATURE" class="btn">Миниатюры</a>
-    <a href="?faction={{ selected_faction.id }}&type=STARTER_SET" class="btn">Стартовые наборы</a>
-    <a href="?faction={{ selected_faction.id }}&type=PAINT" class="btn">Краски</a>
-    <a href="?faction={{ selected_faction.id }}&type=ACCESSORY" class="btn">Аксессуары</a>
+    <a href="?faction={{ selected_faction.id }}" 
+       class="btn {% if not current_product_type %}btn-active{% endif %}">
+        Все товары
+    </a>
+    <a href="?faction={{ selected_faction.id }}&type=MINIATURE" 
+       class="btn {% if current_product_type == 'MINIATURE' %}btn-active{% endif %}">
+        Миниатюры
+    </a>
+    <a href="?faction={{ selected_faction.id }}&type=STARTER_SET" 
+       class="btn {% if current_product_type == 'STARTER_SET' %}btn-active{% endif %}">
+        Стартовые наборы
+    </a>
+    <a href="?faction={{ selected_faction.id }}&type=PAINT" 
+       class="btn {% if current_product_type == 'PAINT' %}btn-active{% endif %}">
+        Краски
+    </a>
+    <a href="?faction={{ selected_faction.id }}&type=ACCESSORY" 
+       class="btn {% if current_product_type == 'ACCESSORY' %}btn-active{% endif %}">
+        Аксессуары
+    </a>
 </div>
 
 <div class="products">
@@ -56,7 +71,7 @@
         </div>
     </div>
     {% empty %}
-    <p>Для этой фракции пока нет товаров.</p>
+    <p>Для этой фракции{% if current_product_type %} и выбранного типа товаров{% endif %} пока нет товаров.</p>
     {% endfor %}
 </div>
 {% endblock %}
